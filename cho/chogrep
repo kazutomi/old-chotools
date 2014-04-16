@@ -1,0 +1,62 @@
+#!/bin/sh
+# $Id: chogrep,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chogrep - search a keyword (slow but displays on found)
+#            result may differ from one from chogrepf
+
+shcat1() {  # cat one file
+    while read i
+    do
+	echo "$i"
+    done < $1
+}
+
+shcatn() {  # cat multiple files
+    while test $# -gt 0
+    do
+	shcat1 < $1
+	shift
+    done
+}
+
+head1n() {  # head -1 and remove trailing newline
+    oifs_head1n="$IFS"
+    IFS=''
+    if read i
+    then
+	echo -n "$i"
+    fi
+    IFS="$oifs_head1n"
+}
+
+nltospc1() {  # replace newline with space
+    while read i
+    do
+	echo -n "$i "
+    done < $1
+}
+
+key="$1"
+alt="$2"
+cd $CHOHOME
+for d in `cholist` ; do
+    OIFS="$IFS"
+    IFS="/"
+    set $d
+    IFS="$OIFS"
+    tag=$1
+    dir=$2
+    if egrep -i "$key" $dir/.chowhat* $dir/.chokeys 2>&1 > /dev/null ; then
+	case $tag in
+	    "#") tagstr="   " ;;
+	    *)   tagstr="($tag)" ;;
+	esac
+	echo "$tagstr " | head1n
+	case $alt in
+	    "-a") head1n < $dir/.chowhat.alt ;;
+	    *)    head1n < $dir/.chowhat ;;
+	esac
+	echo " ($dir/)"
+    fi
+done
+exit 0

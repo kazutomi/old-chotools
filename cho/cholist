@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# cholist - output cho directory listing for other cho commands
+
+cd $CHOHOME
+cholist.awk .chodirs
+exit 0

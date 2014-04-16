@@ -1,0 +1,3 @@
+# $Id: for-cshrc,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+setenv CHOHOME $HOME
+alias chocd 'cd $CHOHOME/`chomap \!*`'

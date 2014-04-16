@@ -1,0 +1,7 @@
+#!/bin/sh
+# $Id: chopath,v 1.1.1.2 1999/03/18 17:13:25 tominaga Exp $
+
+# chopath - output absolute path for a tag
+
+echo $CHOHOME/`chomap $1`
+exit 0

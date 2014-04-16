@@ -1,0 +1,93 @@
+THE DESIGN OF CHO TOOLS
+
+1. DIRECTORY STRUCTURE
+
+The design of this set of tools is quite simple.
+You specify a directory as the environment variable CHOHOME.
+This directory will be the parent directory of all chotools
+directories that you will create.
+
+  $CHOHOME -+- chotool directory 1
+	    |
+	    +- chotool directory 2
+	    |
+	    :
+	    |
+	    +- chotool directory n
+
+(I use my home directory as CHOHOME directory for example)
+
+2. MANAGING DATA
+
+The data to maintain chotool directories are the followings:
+
+ * $CHOHOME/.chodirs
+
+   This file contains the list of names of chotool directories
+   in the order that the most recently used directory comes first.
+
+ * each chotool directory/.chocreated
+
+   This file contains one line of creation date of
+   the chotool directory in YYYY/MM/DD form.
+   chomkdir command makes this file.
+
+ * each chotool directory/.choused
+
+   This file contains one line of "used" date of
+   the chotool directory in YYYY/MM/DD form.
+   You explicitly tell that you "use" this directory
+   by chotouch command.
+
+ * each chotool directory/.chowhat
+
+   This file contains one line of what this directory contains.
+   This information is for you, not for Cho Tools.
+   Initially (at the time this directory is made by chomkdir)
+   this file contain the directory name.  You can put any line
+   to describe the contents of the directory.  Note that
+   only first line of the file is treated as title of
+   the directory.
+
+ * each chotool directory/.chowhat.alt
+
+   The role of this file is similar to the one of .chowhat.
+   The difference is that .chowhat.alt is consulted only when
+   you specify -a (alternative) option for chols command,
+   while .chowhat is used without the option.  In other words,
+   contents of .chowhat is normally used.
+
+   (This file is somewhat obsolete.  It was useful when I used
+   two kinds of terminals: Japanese terminals and ASCII terminals.
+   I put Japanese title in .chowhat, and English title in .chowhat.alt.)
+
+ * each chotool directory/.chokeys
+
+   This file contains keywords for the chotool directory.
+   Initial contents are one line of the directory name.
+   You can put any keywords into this file.
+   This file is consulted by chogrep and chogrepf commands.
+
+Other data, such as ctime/mtime/atime of UNIX file system, are NOT used
+to maintain chotool directories.  You can use chotool directories in the
+same way as you use normal UNIX directories.
+
+3. ROBUSTNESS
+
+The key files that maintain chotool directories are .choused and .chocreated.
+.choused is more important because by default times when you use chotool
+directories decide listing order.  The files .chowhat, .chowhat.alt and
+.chokeys are important only in their existence.
+
+If you happen to destroy .chodirs file, you can reconstruct .chodirs file
+from all of .choused file, because .chodirs just keeps chotool directory
+names in the order that most recently used directory comes first.  Although
+order of two directories that were used in one day might different from
+original order, almost correct list will be recovered in .chodirs file.
+
+4. REMOVAL OF CHOTOOL DIRECTORY
+
+On removal of a chotool directory with chormdir command,
+chormdir command regards any files named .cho* belong to Cho Tools
+and removes them.  You should NOT name your file or directory 
+as .cho*.

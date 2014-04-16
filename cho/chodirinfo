@@ -1,0 +1,10 @@
+#!/bin/sh
+# $Id: chodirinfo,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chodirinfo - display info for current cho directory for other cho commands
+
+cur=`chogetcwd`
+cd $CHOHOME
+home=`chogetcwd`
+echo $home $cur | chodirinfo.awk
+exit 0

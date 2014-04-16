@@ -1,0 +1,59 @@
+#!/bin/sh
+# $Id: chopwd,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chopwd - display what cho directory you are in
+
+shcat1() {  # cat one file
+    while read i
+    do
+	echo "$i"
+    done < $1
+}
+
+shcatn() {  # cat multiple files
+    while test $# -gt 0
+    do
+	shcat1 < $1
+	shift
+    done
+}
+
+head1n() {  # head -1 and remove trailing newline
+    oifs_head1n="$IFS"
+    IFS=''
+    if read i
+    then
+	echo -n "$i"
+    fi
+    IFS="$oifs_head1n"
+}
+
+nltospc1() {  # replace newline with space
+    while read i
+    do
+	echo -n "$i "
+    done < $1
+}
+
+flag="$1"
+out="`chodirinfo`"
+case "$out" in
+    ". ."|"")
+	echo "Not in a cho directory" 1>&2
+	exit 1 ;;
+esac
+set $out
+dir=$1
+all=$2
+whatdir=$CHOHOME/$dir
+tag="`chormap $dir`"
+case $tag in
+    "") echo "$all/: not registered as a cho directory" 1>&2
+        exit 1 ;;
+esac
+echo -n "($tag) ${all}/ "
+case $flag in
+    -a) shcat1 $whatdir/.chowhat.alt ;;
+    *)  shcat1 $whatdir/.chowhat ;;
+esac
+exit 0

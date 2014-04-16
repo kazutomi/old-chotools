@@ -1,0 +1,21 @@
+#!/bin/csh -f
+# $Id: chotouch,v 1.1.1.2 1999/03/18 17:13:25 tominaga Exp $
+
+# chotouch - touch the cho directory
+
+if ( "$1" =~ [a-z] ) then
+    cd $CHOHOME/`chomap $1`
+endif
+if ( ! -f .choused ) then
+    echo "file .choused not found. is this correct directory?"
+    exit 2
+endif
+chotoday > .choused
+set cdir=`pwd`
+set dir=$cdir:t
+cd $CHOHOME
+mv .chodirs .chodirs.bak
+set noclobber
+set dol='$'
+(echo $dir ; egrep -v "^${dir}${dol}" .chodirs.bak) > .chodirs
+exit 0

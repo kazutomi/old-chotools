@@ -1,0 +1,28 @@
+#!/bin/sh
+# $Id: chorendir,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chorendir - rename a cho directory
+
+case $# in
+    2) ;;
+    *) echo "usage: `basename $0` <oldchodirname> <newchodirname>"
+       exit 1 ;;
+esac
+src="$1"
+dst="$2"
+# check if src exists
+if [ ! -r $CHOHOME/$src/.chocreated ]; then
+    echo "$src not exists or not a cho-directory."
+    exit 2
+fi
+# check if dst not exists
+if [ -r $CHOHOME/$dst ]; then
+    echo "$dst exists. nothing done."
+    exit 3
+fi
+# rename
+mv -i $CHOHOME/$src $CHOHOME/$dst
+mv $CHOHOME/.chodirs $CHOHOME/.chodirs.bak
+dol='$'
+sed "s/^$src$dol/$dst/" $CHOHOME/.chodirs.bak > $CHOHOME/.chodirs
+exit 0

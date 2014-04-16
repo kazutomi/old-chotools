@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# dochoconvert - convert info files of chotools earlier than version 0.8
+#                to ones for 0.8 and 0.8x
+
+echo -n "converting files in $CHOHOME/$1..."
+cd $CHOHOME/$1
+if [ -r .chocreated ]; then
+    echo " already a new cho-directory. skipped."
+    exit 0
+fi
+mv -i .created .chocreated
+mv -i .used .choused
+mv -i .what.jp .chowhat
+mv -i .what.us .chowhat.alt
+cat .keywords.jp .keywords.us | sort | uniq > .chokeys
+rm .keywords.jp .keywords.us
+echo " done."

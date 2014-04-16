@@ -1,0 +1,17 @@
+#!/bin/csh -f
+# $Id: chomap,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chomap - maps tag to directory
+
+set tag="$1"
+set tags=(a b c d e f g h i j k l m n o p q r s t u v w x y z)
+set n=1
+while ($n <= $#tags)
+    if ( "$1" == $tags[$n] ) then
+	sed -n "${n},${n}p" $CHOHOME/.chodirs
+	exit 0
+    endif
+    @ n = $n + 1
+end
+echo ""
+exit 1

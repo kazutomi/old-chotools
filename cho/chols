@@ -1,0 +1,71 @@
+#!/bin/sh
+# $Id: chols,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chols - display cho directory listing
+
+shcat1() {  # cat one file
+    while read i
+    do
+	echo "$i"
+    done < $1
+}
+
+shcatn() {  # cat multiple files
+    while test $# -gt 0
+    do
+	shcat1 < $1
+	shift
+    done
+}
+
+head1n() {  # head -1 and remove trailing newline
+    oifs_head1n="$IFS"
+    IFS=''
+    if read i
+    then
+	echo -n "$i"
+    fi
+    IFS="$oifs_head1n"
+}
+
+nltospc1() {  # replace newline with space
+    while read i
+    do
+	echo -n "$i "
+    done < $1
+}
+
+alt=false
+datefile=.choused
+while :
+do
+    case $1 in
+	-a) alt=true;;
+	-c) datefile=.chocreated;;
+	-u) datefile=.choused;;
+	"") break;;
+    esac
+    shift
+done
+
+cd $CHOHOME
+for d in `cholist`
+do
+    oifs="$IFS"
+    IFS="/"
+    set $d
+    IFS="$oifs"
+    tag=$1
+    dir=$2
+    head1n < $dir/$datefile
+    case "$tag" in
+	"#") echo -n "     ";;
+	*)   echo -n " ($tag) ";;
+    esac
+    case $alt in
+	true) head1n < $dir/.chowhat.alt;;
+	*)    head1n < $dir/.chowhat;;
+    esac
+    echo " ($dir/)"
+done
+exit 0

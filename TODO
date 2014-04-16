@@ -1,0 +1,4 @@
+ - add command something like "chorm -r"
+ - write manual
+ - rewrite with perl?
+ - provide Makefiles for users

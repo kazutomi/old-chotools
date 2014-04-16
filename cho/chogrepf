@@ -1,0 +1,80 @@
+#!/bin/sh
+# $Id: chogrepf,v 1.1.1.1 1999/03/18 17:13:25 tominaga Exp $
+
+# chogrepf - search a keyword (fast but displays when done)
+#            result may differ from one from chogrep
+
+shcat1() {  # cat one file
+    while read i
+    do
+	echo "$i"
+    done < $1
+}
+
+shcatn() {  # cat multiple files
+    while test $# -gt 0
+    do
+	shcat1 < $1
+	shift
+    done
+}
+
+head1n() {  # head -1 and remove trailing newline
+    oifs_head1n="$IFS"
+    IFS=''
+    if read i
+    then
+	echo -n "$i"
+    fi
+    IFS="$oifs_head1n"
+}
+
+nltospc1() {  # replace newline with space
+    while read i
+    do
+	echo -n "$i "
+    done < $1
+}
+
+key="$1"
+alt="$2"
+cd $CHOHOME
+cholist | (
+    # this part concatenates the tag, dir, chowhat and chokeys
+    # (including the tag is bad, but for speed)
+    while read x
+    do
+	oifs="$IFS"
+	IFS="/"
+	set $x
+	IFS="$oifs"
+	tag=$1
+	dir=$2
+	echo -n "$x/"
+	nltospc1 $dir/.chowhat
+	nltospc1 $dir/.chowhat.alt
+	nltospc1 $dir/.chokeys
+	echo ""
+    done
+) | egrep -i "$key" | (
+    # this part gets the tag and dir to display chowhat
+    while read x
+    do
+	oifs="$IFS"
+	IFS="/"
+	set $x
+	IFS="$oifs"
+	tag=$1
+	dir=$2
+	case $tag in
+	    "#") echo "    " | head1n ;;
+	    *)   echo "($tag) " | head1n ;;
+	esac
+	case $alt in
+	    "-a") head1n < $dir/.chowhat.alt ;;
+	    *)    head1n < $dir/.chowhat ;;
+	esac
+	echo " ($dir/)"
+    done
+)
+exit 0

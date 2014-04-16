@@ -1,0 +1,32 @@
+#!/bin/sh
+# $Id: chormdir,v 1.1.1.2 1999/03/18 17:13:25 tominaga Exp $
+
+# chormdir - remove empty cho directory
+# caution: filename of .cho* is regarded as cho files and silently removed!
+
+case $# in
+    1) ;;	# sorry for inconvenience
+    *) echo "usage: `basename $0` <cho-directory>"
+       exit 1 ;;
+esac
+dir=$1
+cd $CHOHOME/$dir
+if [ ! -f .chocreated ]; then
+    echo "$dir/ is not a cho-directory. nothing done."
+    exit 2
+fi
+# $dir is a cho directory. check if anything remains
+set `ls -1A | egrep -v '^\.cho' | wc -l`
+fn=$1
+case $fn in
+    0) rm .cho*
+       cd $CHOHOME
+       rmdir $dir ;;
+    *) echo "files or directories exist in the cho directory. nothing done."
+       exit 3 ;;
+esac
+# remove the entry from .chodirs
+mv $CHOHOME/.chodirs $CHOHOME/.chodirs.bak
+dol='$'
+sed "/^$dir$dol/d" $CHOHOME/.chodirs.bak > $CHOHOME/.chodirs
+exit 0

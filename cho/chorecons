@@ -1,0 +1,49 @@
+#!/bin/sh
+# $Id: chorecons,v 1.1.1.2 1999/03/18 17:13:24 tominaga Exp $
+
+# chorecons - reconstruct .chodirs from info stored in each cho directory
+
+shcat1() {  # cat one file
+    while read i
+    do
+	echo "$i"
+    done < $1
+}
+
+shcatn() {  # cat multiple files
+    while test $# -gt 0
+    do
+	shcat1 < $1
+	shift
+    done
+}
+
+head1n() {  # head -1 and remove trailing newline
+    oifs_head1n="$IFS"
+    IFS=''
+    if read i
+    then
+	echo -n "$i"
+    fi
+    IFS="$oifs_head1n"
+}
+
+nltospc1() {  # replace newline with space
+    while read i
+    do
+	echo -n "$i "
+    done < $1
+}
+
+cd $CHOHOME
+mv .chodirs .chodirs.bak
+echo -n 'reconstructing .chodirs ...'
+for dir in *; do
+    if [ -r $dir/.choused ]; then
+	# $dir is a cho directory
+	used=`sed s:/::g $dir/.choused`
+	echo $used $dir
+    fi
+done | sort -rn | sed 's/^[^ ]* *//' > .chodirs
+echo ' done.'
+exit 0
